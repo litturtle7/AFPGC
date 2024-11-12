@@ -1,0 +1,136 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code. 
+
+Try executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Ctrl+Shift+Enter*. 
+
+```{r}
+library(maftools)
+library(readxl)
+library(dplyr)
+library(openxlsx)
+```
+```{r}
+# Set file paths
+maf_file_path <- "C:/Users/14668/Desktop/My/capstone/genomics/combined/maftools/input/combined_maf.txt"
+cnv_file_path <- "C:/Users/14668/Desktop/My/capstone/genomics/combined/maftools/input/combined_cnv_processed.csv"
+clinical_file_path <- "C:/Users/14668/Desktop/My/capstone/genomics/combined/maftools/input/combined_clinical.xlsx"
+
+# Load the MAF file
+maf <- read.maf(maf = maf_file_path)
+
+# Load CNV data
+cnv_data <- read.csv(cnv_file_path)
+colnames(cnv_data) <- c("Gene", "Tumor_Sample_Barcode", "CN") # Rename columns for consistency
+
+# Load clinical data
+clinical_data <- read.xlsx(clinical_file_path)
+
+# Merge clinical data with CNV data
+combined_data <- clinical_data %>%
+  left_join(cnv_data, by = "Tumor_Sample_Barcode")
+
+head(combined_data)
+```
+```{r}
+# Load the MAF object with integrated CNV and clinical data
+maf <- read.maf(maf = maf_file_path, clinicalData = combined_data, cnTable = cnv_data)
+```
+
+
+```{r}
+
+  AFPGC_LM_pos = c("G07_T", "G04_T", "G09_T", "G17_T", "G18_T", "G19_T", "G23_T", "G29_T", "G37_T", "G38_T", "G47_T", "G55_T", "G56_T", "G01_T", "G03_T", "G06_T", "G39_T", "G60_T", "G69_T", "G83_T")
+  AFPGC_LM_neg = c("G02_T", "G05_T", "G08_T", "G10_T", "G11_T", "G12_T", "G13_T", "G14_T", "G15_T", "G16_T", "G20_T", "G21_T", "G22_T", "G24_T", "G25_T", "G26_T", "G27_T", "G30_T", "G31_T", "G43_T", "G52_T", "G54_T", "G59_T", "G62_T", "G67_T", "G71_T", "G73_T", "G80_T", "G86_T", "G87_T", "G94_T", "G95_T", "G96_T", "G97_T", "G28_T", "G75_T", "G72_T", "G85_T")
+  MSKCC_LM_pos = c("P-0000062-T01-IM3", "P-0000115-T01-IM3", "P-0000117-T01-IM3", "P-0000249-T02-IM3", "P-0000408-T01-IM3", "P-0000488-T01-IM3", "P-0000553-T01-IM3", "P-0000553-T02-IM5", "P-0000570-T01-IM3", "P-0000605-T01-IM3", "P-0000722-T01-IM3", "P-0000730-T01-IM3", "P-0000938-T01-IM3", "P-0001136-T01-IM3", "P-0001158-T01-IM3", "YJ-her-007-M2", "P-0001197-T01-IM3", "P-0001222-T01-IM3", "P-0001393-T01-IM3", "P-0001583-T01-IM3", "P-0001667-T01-IM3", "P-0001699-T01-IM3", "P-0001699-T02-IM5", "P-0001764-T01-IM3", "P-0002152-T01-IM3", "P-0002171-T01-IM3", "P-0002192-T01-IM3", "P-0002208-T01-IM3", "P-0002208-T02-IM5", "P-0002208-T03-IM5", "P-0002465-T01-IM3", "P-0002468-T01-IM3", "P-0002549-T01-IM3", "P-0003426-T01-IM5", "P-0003875-T01-IM5", "P-0003944-T01-IM3", "P-0003983-T01-IM3", "P-0004046-T01-IM3", "P-0004116-T01-IM5", "P-0004536-T01-IM5", "P-0004647-T01-IM5", "P-0004680-T01-IM5", "P-0004680-T02-IM5", "P-0004998-T01-IM5", "P-0005431-T01-IM5", "P-0005488-T01-IM5", "P-0005618-T02-IM5", "P-0005702-T01-IM5", "P-0005709-T01-IM5", "P-0005995-T01-IM5", "P-0006112-T01-IM5", "P-0006112-T02-IM5", "P-0007598-T01-IM5", "P-0008188-T01-IM5", "P-0008536-T02-IM5", "P-0008956-T01-IM5", "P-0009055-T01-IM5", "P-0009069-T01-IM5", "P-0009088-T01-IM5", "P-0009337-T01-IM5", "P-0009868-T01-IM5", "P-0011175-T01-IM5", "P-0012627-T01-IM5", "P-0012720-T01-IM5", "P-0013302-T01-IM5", "P-0014327-T01-IM6", "P-0014672-T01-IM6", "P-0015904-T01-IM6", "P-0018538-T01-IM6", "P-0018568-T01-IM6", "P-0018683-T01-IM6", "s_YJ_her_003_P3", "s_YJ_her_003_P1", "s_YJ_her_009_M2", "s_YJ_her_009_P", "s_YJ_her_010_P2", "s_YJ_her_010_P1", "s_YJ_her_012_P1", "s_YJ_her_012_P2", "P-0016294-T01-IM6", "P-0008187-T01-IM5", "P-0002743-T01-IM3", "P-0006838-T01-IM5", "P-0006911-T02-IM5", "P-0004551-T01-IM5", "P-0015251-T01-IM6", "P-0005919-T01-IM5", "P-0015331-T01-IM6", "P-0004043-T01-IM3")
+
+
+```
+
+```{r}
+vc_cols <- c(
+  'Missense_Mutation' = "#80A6BC",
+  'Nonsense_Mutation' = "#D3C6C8",
+  'Frame_Shift_Del' = "#FBB1A2",
+  'In_Frame_Del' = "#A1A9D0",
+  'In_Frame_Ins' = "#CABBC9",
+  'Splice_Site' = "#F9BFA4",
+  'Multi_Hit' = "#919191",
+  'Amp' = "#F18B94", 
+  'Del' = "#9CAEBA",
+  'Complex_Event' = "#DAC5A7",
+  "emptyFillColor" = "#f5f5f5"
+  
+)
+
+titv_col = c('C>T' = "#EBAFAE",
+             'T>A' = "#E4C2B7",
+             'C>G' = "#EFD9B7",
+             'T>C' = "#ADB7C1",
+             'C>A' = "#AFCBDC",
+             'T>G' = "#8BAEC4")
+
+annotationColor <- list(
+  Liver_Metastasis = c('Yes' = '#FBB1A2', 'No' = '#80A6BC'),
+  GC_Type = c('AFPGC' = '#FEDBA3', 'CGC' = '#A1A9D0'),
+  Gender = c('Male' = '#9E9BA2', 'Female' = '#EEE9E9'),
+  Age = c('> 60' = '#9E9BA2', '<= 60' = '#EEE9E9'),
+  Stage = c('I-II' = '#EEE9E9', 'III' = '#C7C2C5', 'IV' = '#9E9BA2')
+)
+
+genes <- c('ERBB2','ERBB3','CCNE1','CCND1','ATM','TP53', 'MYC','PIK3CA', 'PTEN', 'SMAD4', 'ARID1A', 'ARID1B', 'CSMD3')
+
+```
+```{r}
+
+svg_file_path <- "C:/Users/14668/Desktop/My/capstone/genomics/combined/maftools/output/0516/oncoplot_AFPGC_LM(-).svg"
+svg(filename = svg_file_path, width = 10, height = 7)
+
+# Filter MAF data based on specified samples
+maf_AFPGC_LM_neg <- subsetMaf(maf, tsb = AFPGC_LM_neg)
+clinical_AFPGC_LM_neg <- clinical_data[clinical_data$Tumor_Sample_Barcode %in% AFPGC_LM_neg, ]
+
+# Create the oncoplot
+oncoplot(maf = maf_AFPGC_LM_neg, 
+         clinicalFeatures = c('Liver_Metastasis','GC_Type','Stage','Gender', 'Age'), 
+         genes = genes, 
+         showTumorSampleBarcodes = FALSE, 
+         SampleNamefontSize = 0.4,
+         sortByAnnotation = TRUE, 
+         annotationColor = annotationColor,
+         annotationFontSize = 1,
+         fontSize = 0.5,
+         legendFontSize = 1,
+         colors = vc_cols,
+         draw_titv = TRUE,
+         titv_col = titv_col,
+         removeNonMutated = FALSE,
+         keepGeneOrder = TRUE,
+         bgCol = '#EFEFEF')
+
+dev.off()
+```
+```{r}
+setwd("C:/Users/14668/Desktop/My/capstone/genomics/combined/maftools/input")
+
+maf_data <- read.table("combined_maf.txt", header = TRUE, sep = "\t", stringsAsFactors = FALSE)
+
+# Count the occurrences of each sample name
+sample_counts <- table(maf_data$Tumor_Sample_Barcode)
+
+# Find samples and the total number that appear fewer than 5 times
+samples_with_few_counts <- sample_counts[sample_counts < 5]
+print(samples_with_few_counts)
+cat("Number of samples with less than 5 occurrences:", length(samples_with_few_counts), "\n")
+
+```
+
+
+Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Ctrl+Alt+I*.
+
+When you save the notebook, an HTML file containing the code and output will be saved alongside it (click the *Preview* button or press *Ctrl+Shift+K* to preview the HTML file).
+
+The preview shows you a rendered HTML copy of the contents of the editor. Consequently, unlike *Knit*, *Preview* does not run any R code chunks. Instead, the output of the chunk when it was last run in the editor is displayed.
